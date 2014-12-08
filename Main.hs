@@ -36,28 +36,28 @@ makeMove _ (Compass _ _ _ _ (Just Done)) = Nothing
 makeMove _ (Compass _ _ _ _ (Just m)) = Just m
 
 makeMove N c
-  | west c > 0 = Just W
+  | west  c > 0 = Just W
   | north c > 0 = Just N
-  | east c > 0 = Just E
+  | east  c > 0 = Just E
   | south c > 0 = Just S
 
 makeMove W c
   | south c > 0 = Just S
-  | west c > 0 = Just W
+  | west  c > 0 = Just W
   | north c > 0 = Just N
-  | east c > 0 = Just E
+  | east  c > 0 = Just E
 
 makeMove S c
-  | east c > 0 = Just E
+  | east  c > 0 = Just E
   | south c > 0 = Just S
-  | west c > 0 = Just W
+  | west  c > 0 = Just W
   | north c > 0 = Just N
 
 makeMove E c
   | north c > 0 = Just N
-  | east c > 0 = Just E
+  | east  c > 0 = Just E
   | south c > 0 = Just S
-  | west c > 0 = Just W
+  | west  c > 0 = Just W
 
 makeMove _ _ = error "Trapped! :("
 
