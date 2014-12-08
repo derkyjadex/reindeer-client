@@ -7,6 +7,7 @@ import qualified Data.ByteString as B
 import Data.List.Split (splitOn)
 import Data.ByteString.Char8 (unpack, pack)
 
+connParams :: ConnectionParams
 connParams =
   ConnectionParams {connectionHostname = "10.112.156.136"
                    ,connectionPort = 8080
@@ -90,6 +91,7 @@ mainLoop (conn,oldMove) =
          do putStrLn "Done!!!"
             return (conn,Done)
 
+main :: IO (Connection, Move)
 main =
   do ctx <- initConnectionContext
      conn <- connectTo ctx connParams
