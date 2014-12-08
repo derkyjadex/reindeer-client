@@ -64,10 +64,11 @@ makeMove _ _ = error "Trapped! :("
 mainLoop :: (Connection, Move) -> IO (Connection, Move)
 mainLoop (conn, oldMove) = do
         msg <- connectionGetLine 4096 conn
-        putStrLn $ unpack msg
+        putStr $ (unpack msg) ++ " -> "
         let compass = parseMsg $ unpack msg
         case makeMove oldMove compass of
             Just move -> do
+                putStrLn $ show move
                 connectionPut conn $ pack $ show move
                 connectionPut conn "\n"
                 mainLoop (conn, move)
