@@ -77,12 +77,12 @@ mainLoop :: (Connection, Move) -> IO (Connection, Move)
 mainLoop (conn,oldMove) =
   do msg <- connectionGetLine 4096 conn
      putStr $
-       (unpack msg) ++
+       unpack msg ++
        " -> "
      let compass = parseMsg $ unpack msg
      case makeMove oldMove compass of
        Just move ->
-         do putStrLn $ show move
+         do print move
             connectionPut conn $ pack $ show move
             connectionPut conn "\n"
             mainLoop (conn,move)
