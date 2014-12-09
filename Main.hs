@@ -2,8 +2,8 @@
 
 module Main where
 
+import Data.Maybe
 import Network.Connection
-import qualified Data.ByteString as B
 import Data.List.Split (splitOn)
 import Data.ByteString.Char8 (unpack, pack)
 
@@ -44,42 +44,34 @@ parseMsg input =
              (read w)
              p'
 
+clockwise :: [Move]
+clockwise = N:E:S:W:clockwise
+
+open :: Compass -> Move -> Maybe Move
+open c d
+  | d == N && north c > 0 = Just d
+  | d == E && east  c > 0 = Just d
+  | d == S && south c > 0 = Just d
+  | d == W && west  c > 0 = Just d
+  | otherwise = Nothing
+
+openMoves :: Compass -> [Move] -> [Move]
+openMoves c ms =
+  catMaybes (fmap (open c) ms)
+
 makeMove :: Move -> Compass -> Maybe Move
 makeMove _ (Compass _ _ _ _ (Just Done)) = Nothing
 makeMove _ (Compass _ _ _ _ (Just m)) = Just m
-
-makeMove N c
-  | west  c > 0 = Just W
-  | north c > 0 = Just N
-  | east  c > 0 = Just E
-  | south c > 0 = Just S
-
-makeMove W c
-  | south c > 0 = Just S
-  | west  c > 0 = Just W
-  | north c > 0 = Just N
-  | east  c > 0 = Just E
-
-makeMove S c
-  | east  c > 0 = Just E
-  | south c > 0 = Just S
-  | west  c > 0 = Just W
-  | north c > 0 = Just N
-
-makeMove E c
-  | north c > 0 = Just N
-  | east  c > 0 = Just E
-  | south c > 0 = Just S
-  | west  c > 0 = Just W
-
+makeMove N c = Just (head (openMoves c [W, N, E, S]))
+makeMove W c = Just (head (openMoves c [S, W, N, E]))
+makeMove S c = Just (head (openMoves c [E, S, W, N]))
+makeMove E c = Just (head (openMoves c [N, E, S, W]))
 makeMove _ _ = error "Trapped! :("
 
 mainLoop :: (Connection, Move) -> IO (Connection, Move)
 mainLoop (conn,oldMove) =
   do msg <- connectionGetLine 4096 conn
-     putStr $
-       unpack msg ++
-       " -> "
+     putStr $ unpack msg ++ " -> "
      let compass = parseMsg $ unpack msg
      case makeMove oldMove compass of
        Just move ->
