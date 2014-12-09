@@ -1,0 +1,8 @@
+* Haskell Reindeer Maze Client
+
+A maze solver for the West London Hack Night 2014 Xmas Special. This
+code runs against the [[https://github.com/krisajenkins/reindeer-maze][RDCP Server]].
+
+** Running
+
+Call =cabal run=.
