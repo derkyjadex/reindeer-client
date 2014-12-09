@@ -55,6 +55,11 @@ open c d
   | d == W && west  c > 0 = Just d
   | otherwise = Nothing
 
+
+possibleMoves :: Move -> [Move]
+possibleMoves Done = []
+possibleMoves c = drop 3 $ dropWhile (/= c) clockwise
+
 openMoves :: Compass -> [Move] -> [Move]
 openMoves c ms =
   catMaybes (fmap (open c) ms)
@@ -62,11 +67,11 @@ openMoves c ms =
 makeMove :: Move -> Compass -> Maybe Move
 makeMove _ (Compass _ _ _ _ (Just Done)) = Nothing
 makeMove _ (Compass _ _ _ _ (Just m)) = Just m
-makeMove N c = Just (head (openMoves c [W, N, E, S]))
-makeMove W c = Just (head (openMoves c [S, W, N, E]))
-makeMove S c = Just (head (openMoves c [E, S, W, N]))
-makeMove E c = Just (head (openMoves c [N, E, S, W]))
-makeMove _ _ = error "Trapped! :("
+makeMove m c =
+  case moves of
+    [] -> error "Trapped! :("
+    _ -> Just (head moves)
+  where moves = openMoves c (possibleMoves m)
 
 mainLoop :: (Connection, Move) -> IO (Connection, Move)
 mainLoop (conn,oldMove) =
